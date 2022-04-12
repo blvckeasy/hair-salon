@@ -1,0 +1,22 @@
+{
+  "name": "hair-salon",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "fastify": "^3.28.0",
+    "fastify-cors": "^6.0.3",
+    "fastify-static": "^4.6.1",
+    "pg": "^8.7.3"
+  }
+}
