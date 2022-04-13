@@ -12,9 +12,17 @@ class Controller {
     reply.send({ hello: 'method delete' })  
   }
 
+  
+  
+}
+
+class SocketController {
   PUT (request, reply) {
     reply.send({ hello: 'method put' })
   }
 }
 
-export default Controller
+export {
+  Controller,
+  SocketController
+}

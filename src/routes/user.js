@@ -1,4 +1,4 @@
-import Controller from '../controllers/user.js'
+import { Controller } from '../controllers/user.js'
 
 const controller = new Controller()
 
