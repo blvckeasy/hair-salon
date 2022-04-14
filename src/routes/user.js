@@ -1,4 +1,4 @@
-import { Controller } from '../controllers/user.js'
+import Controller from '../controllers/user.js'
 
 const controller = new Controller()
 
@@ -10,22 +10,24 @@ class Route {
   }
 
   POST (fastify, opts, next) {
-    fastify.post('/api/users', (request, reply) => controller.POST)
-
+    fastify.post('/api/users', controller.POST)
+    fastify.post('/api/login', controller.LOGIN)
+    fastify.post('/api/register', controller.REGISTER)
     next()
   }
 
   DELETE (fastify, opts, next) {
-    fastify.delete('/api/users', (request, reply) => controller.DELETE)
+    fastify.delete('/api/users', controller.DELETE)
 
     next()
   }
 
   PUT (fastify, opts, next) {
-    fastify.put('/api/users', (request, reply) => controller.PUT)
+    fastify.put('/api/users', controller.PUT)
 
     next()
   }
+
 }
 
 

@@ -1,4 +1,5 @@
 import pg from 'pg'
+import '../../config.js'
 
 const pool = new pg.Pool({
 	user: process.env.PG_USER,

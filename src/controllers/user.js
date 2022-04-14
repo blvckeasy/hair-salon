@@ -1,28 +1,45 @@
+import { fetch, fetchAll } from '../utils/postgres.js'
+
 class Controller {
-  GET (request, reply) {
+  async GET (request, reply) {
     
     reply.send({ hello: 'get' })
   }
 
-  POST (request, reply) {
+  async POST (request, reply) {
     reply.send({ hello: 'method post' })
   }
 
-  DELETE (request, reply) {
+  async DELETE (request, reply) {
     reply.send({ hello: 'method delete' })  
   }
 
-  
-  
-}
-
-class SocketController {
-  PUT (request, reply) {
+  async PUT (request, reply) {
     reply.send({ hello: 'method put' })
   }
+  
+  async LOGIN (request, reply) {
+    try {
+      const user = await fetch(`select now()`)
+      console.log(user)
+    } catch (err) {
+      return reply.send({
+        error: err.message,
+        data: {}
+      })
+    }
+  }
+
+  REGISTER (request, reply) {
+    //
+  }
+
 }
 
-export {
-  Controller,
-  SocketController
-}
+// class SocketController {
+//   PUT (request, reply) {
+//     reply.send({ hello: 'method put' })
+//   }
+// }
+
+export default Controller

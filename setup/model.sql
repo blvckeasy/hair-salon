@@ -6,7 +6,7 @@ create table if not exists users (
   password varchar(20) not null,
   contact varchar(100),
   contact_type varchar(30) not null,
-  role varchar(30) default 'client';
+  role varchar(30) default 'client',
   socket_id varchar(20),
   user_created_at timestamptz default now(),
   user_updated_at timestamptz default now(),
