@@ -98,3 +98,8 @@ insert into users (fullname, email_utils_id, image_url, role_id) values
   ('Jsandye Corhard', 8, 'http://dummyimage.com/114x100.png/dddddd/000000', 1),
   ('Ferdinand Pottinger', 9, 'http://dummyimage.com/192x100.png/ff4444/ffffff', 2),
   ('Ambrosius Vigar', 10, 'http://dummyimage.com/121x100.png/5fa2dd/ffffff', 2);
+
+
+
+
+insert into users (fullname, email_utils_id ) values ('blvckeasy', 11);

@@ -25,8 +25,3 @@ export default async function sendEmail (address, subject, html) {
 
   return "message sent please check your email"
 }
-
-
-// console.log(Object.keys(info.response));
-// console.log(info.response);
-// console.log('Email sent: ' + info.messageId);

@@ -1,5 +1,5 @@
 import { sign, verify } from '../utils/jwt.js'
-import { ADD_EMAIL } from '../../setup/queries.js'
+import { ADD_EMAIL, FOUND_EMAIL, FOUNT_USER_FROM_EMAIL } from '../../setup/queries.js'
 import { fetch, fetchAll } from '../utils/postgres.js'
 import { WriteFile } from '../utils/file.modul.js'
 import { image_mimetypes } from '../../config.js'
@@ -9,34 +9,31 @@ import { addMinutes } from '../utils/time.js'
 class Controller {
   async LOGIN (req, res) {
     try {
-      const { fullname, email } = req.body
+      const { email, code } = req.body
       
+      const found_email = await fetch(FOUND_EMAIL, email, code)
+      if (!found_email) throw new Error('Password invalid!')
       
+      const found_user = await fetch(FOUNT_USER_FROM_EMAIL, found_email.id)
+      if (!found_user) throw new Error('User not defined!')
 
+      return res.json({
+        message: "welcome hair salon web site ;)",
+        data: found_user,
+        token: sign(found_user)
+      })
     } catch (err) {
       return res.json({
+        message: "Maybe you will try from the beginning :(",
         error: err.message,
-        data: {}
+        data: {},
       })
     }
   }
 
   async REGISTER (req, res) {
     try {
-      let { username, password, contact, contact_type_id } = req.body
-
-      if (!username || !password || !contact || !contact_type_id) throw new Error('Enter the information correctly!')
-      if (username.split('').inludes(' ')) throw new Error('')
-      if (!image_mimetypes.includes(req.file.mimetype.split('/')[1])) throw new Error(`Only image upload. mimetypes: ${image_mimetypes.join(', ')}!`)
-      if ((req.file.size / 1024 / 1024) > 10) throw new Error('the file size is too large!')
-
-      username = username.trim()
-
-      const file_name = await WriteFile(req.file)
-
-      // const new_user = 
-
-      console.log(req.file)
+      
     } catch (error) {
       return res.json({
         error: error.message,
@@ -49,11 +46,9 @@ class Controller {
     try {
       const { email } = req.body
       const random_number = String(parseInt(Math.random() * 100000)).padStart(5, 0)
-      const database_email = await fetch(ADD_EMAIL, email, random_number, addMinutes(5))
-  
       const message = await sendEmail(email, 'Hair salon', `b>Your code:</b> <i>${random_number}</i>`)
       
-      console.log(random_number)
+      await fetch(ADD_EMAIL, email, random_number, addMinutes(5))
 
       return res.json({
         message,
