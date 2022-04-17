@@ -1,13 +1,22 @@
 create database hair_salon;
 
+drop table if exists email_utils cascade;
+create table if not exists email_utils (
+  id smallserial primary key,
+  email varchar(120) not null unique,
+  email_send_code int,
+  email_code_validity_period timestamptz not null,
+  email_created_at timestamptz default now(),
+  email_updated_at timestamptz default now(),
+  email_deleted_at timestamptz default null
+);
+
 drop table if exists users cascade;
 create table if not exists users (
   id smallserial primary key,
-  username varchar(40) not null unique,
-  password varchar(20) not null,
-  image_url text,
-  contact varchar(100),
-  contact_type_id int references contact_types(id) default 1,
+  fullname varchar(50) not null,
+  email_utils_id int references email_utils(id),
+  image_url varchar default '/user.image.jpg',
   role_id int references roles(id) default 1,
   socket_id varchar(40),
   user_created_at timestamptz default now(),
@@ -15,11 +24,6 @@ create table if not exists users (
   user_deleted_at timestamptz default null
 );
 
-drop table if exists contact_types cascade;
-create table if not exists contact_types (
-  id smallserial primary key,
-  name varchar(30) not null
-);
 
 drop table if exists roles cascade;
 create table if not exists roles (
@@ -35,6 +39,7 @@ create table if not exists orders (
   client_id int references users(id),
   barber_id int references users(id),
   is_complated boolean default false,
+  is_canceled boolean default false,
   order_created_at timestamptz default now(),
   order_updated_at timestamptz default now(),
   order_deleted_at timestamptz default null
@@ -46,7 +51,7 @@ create table if not exists messages (
   user_id int references users(id),
   to_user_id int references users(id),
   message_type varchar(25) not null,
-  file_url text,
+  file_url varchar,
   message_created_at timestamptz default now(),
   message_updated_at timestamptz default now(),
   message_deleted_at timestamptz default null
@@ -59,22 +64,37 @@ create table if not exists stars (
   barber_id int references users(id),
   order_id int references orders(id),
   count smallint default 0,
-  message_created_at timestamptz default now(),
-  message_updated_at timestamptz default now(),
-  message_deleted_at timestamptz default null
+  stars_created_at timestamptz default now(),
+  stars_updated_at timestamptz default now(),
+  stars_deleted_at timestamptz default null
 );
 
-insert into contact_types (name) values ('phone'), ('email');
 insert into roles (name) values ('client'), ('barber'), ('admin');
 
-insert into users (id, username, password, contact, contact_type_id, socket_id, role_id, user_created_at, user_updated_at) values 
-  (1, 'Carlin', 'HdLFlNHPrsnC', '(770) 1868272', 1, '6257ccd5fc13ae3456000000', 1, '2022-02-02 21:23:35', '2022-03-16 10:21:45'),
-  (2, 'Hanniei', 'CEhejHP20G', '(710) 5846731', 1, '6257ccd5fc13ae3456000001', 1, '2022-01-04 21:44:57', '2021-12-28 11:07:19'),
-  (3, 'Blythe', 'QIwfHazHs5P', '(267) 7313023', 1, '6257ccd5fc13ae3456000002', 1, '2021-07-27 13:09:33', '2021-06-06 17:51:33'),
-  (4, 'Elton', 'chEDZC', '(801) 9049642', 1, '6257ccd5fc13ae3456000003', 2, '2021-06-09 18:19:13', '2021-06-05 03:58:58'),
-  (5, 'Kathy', '6R1dDX', '(662) 7283938', 1, '6257ccd5fc13ae3456000004', 2, '2022-03-07 23:30:04', '2022-02-21 05:29:28'),
-  (6, 'Josiah', 'xB2yFc', '(671) 9860355', 1, '6257ccd5fc13ae3456000005', 1, '2022-02-07 01:28:00', '2021-11-26 03:13:06'),
-  (7, 'Millie', 'F0BO5f', '(610) 7996552', 1, '6257ccd5fc13ae3456000006', 1, '2022-03-06 14:36:52', '2021-07-28 07:16:37'),
-  (8, 'Templeton', 'SHEJfOOCz0tE', '(499) 6938612', 1, '6257ccd5fc13ae3456000007', 3, '2022-01-30 05:52:41', '2021-07-30 11:41:56'),
-  (9, 'Axel', 's7AA4ZxHP', '(522) 5700738', 1, '6257ccd5fc13ae3456000008', 1, '2021-08-03 03:49:30', '2022-02-25 10:48:53'),
-  (10, 'Davine', 'dsoHnu', '(154) 3767798', 1, '6257ccd5fc13ae3456000009', 2, '2022-02-02 18:18:19', '2022-04-06 14:06:13');
+delete from users where fullname=fullname;
+delete from email_utils where email=email;
+
+insert into email_utils (email, email_send_code, email_code_validity_period) values 
+  ('dharriss0@admin.ch', 13629, '2022-02-08 04:24:06'),
+  ('kmoberley1@seattletimes.com', 63080, '2021-05-08 08:59:42'),
+  ('cgoulstone2@tiny.cc', 80159, '2021-06-25 01:41:01'),
+  ('gmiddleweek3@ehow.com', 68224, '2022-02-19 15:57:56'),
+  ('dheffron4@google.com.br', 81800, '2022-01-17 03:05:37'),
+  ('cferraro4@princeton.edu', 59195, '2021-12-25 20:57:23'),
+  ('mjoselson1@blog.com', 65671, '2021-12-21 02:31:31'),
+  ('amoine2@opensource.org', 68586, '2021-10-30 13:24:39'),
+  ('camery3@about.com', 61987, '2021-07-22 17:02:41'),
+  ('rshapiro4@wikimedia.org', 95852, '2021-06-20 12:03:38');
+
+
+insert into users (fullname, email_utils_id, image_url, role_id) values 
+  ('Silvio Jiricka', 1,'http://dummyimage.com/102x100.png/cc0000/ffffff', 3),
+  ('Letty Biggs', 2, 'http://dummyimage.com/179x100.png/5fa2dd/ffffff', 2),
+  ('Tracy Clubley', 3, 'http://dummyimage.com/225x100.png/dddddd/000000', 3),
+  ('Sheila-kathryn Fassum', 4, 'http://dummyimage.com/122x100.png/dddddd/000000', 3),
+  ('Trisha Mawby', 5, 'http://dummyimage.com/117x100.png/dddddd/000000', 3),
+  ('Kyle Gero', 6, 'http://dummyimage.com/107x100.png/cc0000/ffffff', 2),
+  ('Margot Kelling', 7, 'http://dummyimage.com/169x100.png/dddddd/000000', 3),
+  ('Jsandye Corhard', 8, 'http://dummyimage.com/114x100.png/dddddd/000000', 1),
+  ('Ferdinand Pottinger', 9, 'http://dummyimage.com/192x100.png/ff4444/ffffff', 2),
+  ('Ambrosius Vigar', 10, 'http://dummyimage.com/121x100.png/5fa2dd/ffffff', 2);
