@@ -23,5 +23,5 @@ export default async function sendEmail (address, subject, html) {
     }
   });
 
-  return "message sent please check your email"
+  return "Message sent please check your email. The code is valid for 10 minutes."
 }
