@@ -37,25 +37,24 @@ class Controller {
       const { fullname, email, code } = req.body
       const file = req.file
       const found_email = await fetch(queries.FOUND_EMAIL_FROM_EMAIL_TABLE, email, code)
-      
+      let file_name = null
+
       if (!email.match(email_regex)) throw new Error('Invalid email !')
       if (!found_email) throw new Error('Email not found or password already outdated !')
 
-    
-
-      const new_user = {
-        fullname,
-        email_utils_id: found_email.id,
-        img_url: null
+      if (file) {
+        if (!image_mimetypes.includes(file.mimetype.split('/')[1])) throw new Error(`Only img upload. Mimetypes: ${image_mimetypes.join(', ')}`)
+        file_name = await WriteFile(file)
       }
 
+      const user = await fetch(queries.INSERT_USER, fullname, found_email.id, file_name)
+      const found_user = await fetch(queries.FOUNT_USER_FROM_EMAIL, user.email_utils_id)
 
-      console.log(file)
-
-      // console.log(file)
-      // console.log(email)
-      // console.log(fullname)
-
+      return res.json({
+        message: "operation successfully ended.",
+        data: found_user,
+        token: sign(found_user)
+      })
     } catch (error) {
       return res.json({
         error: error.message,

@@ -15,7 +15,7 @@ drop table if exists users cascade;
 create table if not exists users (
   id smallserial primary key,
   fullname varchar(50) not null,
-  email_utils_id int references email_utils(id),
+  email_utils_id int references email_utils(id) unique,
   image_url varchar default '/user.image.jpg',
   role_id int references roles(id) default 1,
   socket_id varchar(40),
