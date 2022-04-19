@@ -68,7 +68,7 @@ class Controller {
       const { email } = req.body
       const random_number = String(parseInt(Math.random() * 100000)).padStart(5, 0)
       const message = await sendEmail(email, 'Hair salon', `b>Your code:</b> <i>${random_number}</i>`)
-
+      
       await fetch(queries.ADD_EMAIL, email, random_number, addMinutes(10))
 
       return res.json({
