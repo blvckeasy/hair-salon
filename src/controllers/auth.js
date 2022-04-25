@@ -12,10 +12,10 @@ class Controller {
     try {
       const { email, code } = req.body
       
-      const found_email = await fetch(queries.FOUND_EMAIL_FROM_EMAIL_TABLE, email, code)
+      const found_email = await fetch(queries.getEmail, email, code)
       if (!found_email) throw new Error('Password invalid!')
       
-      const found_user = await fetch(queries.FOUNT_USER_FROM_EMAIL, found_email.id)
+      const found_user = await fetch(queries.getUserFromEmail, found_email.id)
       if (!found_user) throw new Error('User not defined!')
 
       return res.json({
@@ -36,7 +36,7 @@ class Controller {
     try {
       const { fullname, email, code } = req.body
       const file = req.file
-      const found_email = await fetch(queries.FOUND_EMAIL_FROM_EMAIL_TABLE, email, code)
+      const found_email = await fetch(queries.getEmail, email, code)
       let file_name = null
 
       if (!email.match(email_regex)) throw new Error('Invalid email !')
@@ -47,8 +47,8 @@ class Controller {
         file_name = await WriteFile(file)
       }
 
-      const user = await fetch(queries.INSERT_USER, fullname, found_email.id, file_name)
-      const found_user = await fetch(queries.FOUNT_USER_FROM_EMAIL, user.email_utils_id)
+      const user = await fetch(queries.postUser, fullname, found_email.id, file_name)
+      const found_user = await fetch(queries.getUserFromEmail, user.email_utils_id)
 
       return res.json({
         message: "operation successfully ended.",
@@ -69,7 +69,7 @@ class Controller {
       const random_number = String(parseInt(Math.random() * 100000)).padStart(5, 0)
       const message = await sendEmail(email, 'Hair salon', `b>Your code:</b> <i>${random_number}</i>`)
       
-      await fetch(queries.ADD_EMAIL, email, random_number, addMinutes(10))
+      await fetch(queries.postEmail, email, random_number, addMinutes(10))
 
       return res.json({
         message,

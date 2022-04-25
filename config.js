@@ -3,10 +3,16 @@ import { host } from './src/utils/os.js'
 dotenv.config()
 
 const PORT = process.env.PORT || 4000
-const TOKEN_TIME = 60 * 60 * 24
+const TOKEN_TIME = 24 * 60 * 60
 const image_mimetypes = ['jpg', 'jpeg', 'png', 'ief']
 const email_code_period = 5   // minute
 const email_regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
+const PAGINATION = {
+  page: 1,
+  limit: 20
+}
+
 
 export {
   PORT,
@@ -15,4 +21,5 @@ export {
   image_mimetypes,
   email_code_period,
   email_regex,
+  PAGINATION,
 }
