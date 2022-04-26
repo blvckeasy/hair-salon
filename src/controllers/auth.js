@@ -12,7 +12,7 @@ class Controller {
     try {
       const { email, code } = req.body
       
-      const found_email = await fetch(queries.getEmail, email, code)
+      const found_email = await fetch(queries.getEmail, email, code.toString().padStart(5, '0'))
       if (!found_email) throw new Error('Password invalid!')
       
       const found_user = await fetch(queries.getUserFromEmail, found_email.id)
@@ -24,6 +24,7 @@ class Controller {
         token: sign(found_user)
       })
     } catch (err) {
+      console.log(err.message)
       return res.json({
         message: "Maybe you will try from the beginning :(",
         error: err.message,
@@ -69,14 +70,15 @@ class Controller {
       const random_number = String(parseInt(Math.random() * 100000)).padStart(5, 0)
       const message = await sendEmail(email, 'Hair salon', `b>Your code:</b> <i>${random_number}</i>`)
       
+      await fetch(queries.deleteEmailFromTime, email)
       await fetch(queries.postEmail, email, random_number, addMinutes(10))
-
+      
       return res.json({
         message,
       })
     } catch (error) {
       return res.json({
-        error: error?.detail,
+        error: error.message,
       })
     }
   }

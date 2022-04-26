@@ -3,12 +3,12 @@ create database hair_salon;
 drop table if exists email_utils cascade;
 create table if not exists email_utils (
   id smallserial primary key,
-  email varchar(120) not null unique,
-  email_send_code int,
-  email_code_validity_period timestamptz not null,
-  email_created_at timestamptz default now(),
-  email_updated_at timestamptz default now(),
-  email_deleted_at timestamptz default null
+  email varchar(120) not null,
+  email_send_code varchar(6),
+  email_code_validity_period timestamp not null,
+  email_created_at timestamp default now(),
+  email_updated_at timestamp default now(),
+  email_deleted_at timestamp default null
 );
 
 drop table if exists users cascade;
@@ -19,9 +19,9 @@ create table if not exists users (
   image_url varchar default '/user.image.jpg',
   role_id int references roles(id) default 1,
   socket_id varchar(40),
-  user_created_at timestamptz default now(),
-  user_updated_at timestamptz default now(),
-  user_deleted_at timestamptz default null
+  user_created_at timestamp default now(),
+  user_updated_at timestamp default now(),
+  user_deleted_at timestamp default null
 );
 
 
@@ -35,14 +35,14 @@ drop table if exists orders cascade;
 create table if not exists orders (
   id smallserial primary key,
   comment varchar(200) not null,
-  date_order_fulfillment timestamptz not null,
+  date_order_fulfillment timestamp not null,
   client_id int references users(id),
   barber_id int references users(id),
   is_complated boolean default false,
   is_canceled boolean default false,
-  order_created_at timestamptz default now(),
-  order_updated_at timestamptz default now(),
-  order_deleted_at timestamptz default null
+  order_created_at timestamp default now(),
+  order_updated_at timestamp default now(),
+  order_deleted_at timestamp default null
 );
 
 drop table if exists messages cascade;
@@ -52,9 +52,9 @@ create table if not exists messages (
   to_user_id int references users(id),
   message_type varchar(25) not null,
   file_url varchar,
-  message_created_at timestamptz default now(),
-  message_updated_at timestamptz default now(),
-  message_deleted_at timestamptz default null
+  message_created_at timestamp default now(),
+  message_updated_at timestamp default now(),
+  message_deleted_at timestamp default null
 );
 
 drop table if exists stars cascade;
@@ -64,9 +64,9 @@ create table if not exists stars (
   barber_id int references users(id),
   order_id int references orders(id),
   count smallint default 0,
-  stars_created_at timestamptz default now(),
-  stars_updated_at timestamptz default now(),
-  stars_deleted_at timestamptz default null
+  stars_created_at timestamp default now(),
+  stars_updated_at timestamp default now(),
+  stars_deleted_at timestamp default null
 );
 
 insert into roles (name) values ('client'), ('barber'), ('admin');
@@ -101,5 +101,14 @@ insert into users (fullname, email_utils_id, image_url, role_id) values
 
 
 
-
-insert into users (fullname, email_utils_id ) values ('blvckeasy', 11);
+select 
+    * 
+  from email_utils 
+  where
+  email = 'abdurakhmonovislom9@gmail.com' and
+  case 
+    when length('42432'::varchar) > 0 then email_send_code='42432'::varchar
+    else TRUE
+  end and 
+  now() < email_code_validity_period and 
+  email_deleted_at is null;
