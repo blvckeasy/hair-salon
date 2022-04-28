@@ -4,8 +4,7 @@ import { WriteFile } from '../utils/file.modul.js'
 import { image_mimetypes } from '../../config.js'
 import sendEmail from '../utils/email.modul.js'
 import { sign } from '../utils/jwt.js'
-import { addMinutes } from '../utils/time.js'
-import { email_regex } from '../../config.js'
+import { email_regex, email_code_period } from '../../config.js'
 
 class Controller {
   async LOGIN (req, res) {
@@ -38,6 +37,8 @@ class Controller {
       const { fullname, email, code } = req.body
       const file = req.file
       const found_email = await fetch(queries.getEmail, email, code)
+      console.log(email, code)
+      console.log(found_email)
       let file_name = null
 
       if (!email.match(email_regex)) throw new Error('Invalid email !')
@@ -68,10 +69,12 @@ class Controller {
     try {
       const { email } = req.body
       const random_number = String(parseInt(Math.random() * 100000)).padStart(5, 0)
-      const message = await sendEmail(email, 'Hair salon', `b>Your code:</b> <i>${random_number}</i>`)
+      const message = await sendEmail(email, 'Hair salon', `<b>Your code:</b> <i>${random_number}</i>`)
       
-      await fetch(queries.deleteEmailFromTime, email)
-      await fetch(queries.postEmail, email, random_number, addMinutes(10))
+      const code = await fetch(queries.updateEmailExists, email, random_number)
+      if (!code) {
+        await fetch(queries.postEmail, email, random_number)
+      }
       
       return res.json({
         message,

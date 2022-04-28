@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer'
 import writeError from './error.js'
+import { email_code_period } from '../../config.js'
 
 export default async function sendEmail (address, subject, html) {
   const transporter = nodemailer.createTransport({
@@ -23,5 +24,5 @@ export default async function sendEmail (address, subject, html) {
     }
   });
 
-  return "Message sent please check your email. The code is valid for 10 minutes."
+  return `Message sent please check your email. The code is valid for ${email_code_period} minutes.`
 }

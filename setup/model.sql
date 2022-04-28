@@ -3,11 +3,11 @@ create database hair_salon;
 drop table if exists email_utils cascade;
 create table if not exists email_utils (
   id smallserial primary key,
-  email varchar(120) not null,
+  email varchar(120) not null unique,
   email_send_code varchar(6),
-  email_code_validity_period timestamp not null,
-  email_created_at timestamp default now(),
-  email_updated_at timestamp default now(),
+  email_code_validity_period timestamp default CURRENT_TIMESTAMP + (interval '10 minute'),
+  email_created_at timestamp default CURRENT_TIMESTAMP,
+  email_updated_at timestamp default CURRENT_TIMESTAMP,
   email_deleted_at timestamp default null
 );
 
@@ -19,8 +19,8 @@ create table if not exists users (
   image_url varchar default '/user.image.jpg',
   role_id int references roles(id) default 1,
   socket_id varchar(40),
-  user_created_at timestamp default now(),
-  user_updated_at timestamp default now(),
+  user_created_at timestamp default CURRENT_TIMESTAMP,
+  user_updated_at timestamp default CURRENT_TIMESTAMP,
   user_deleted_at timestamp default null
 );
 
@@ -40,8 +40,8 @@ create table if not exists orders (
   barber_id int references users(id),
   is_complated boolean default false,
   is_canceled boolean default false,
-  order_created_at timestamp default now(),
-  order_updated_at timestamp default now(),
+  order_created_at timestamp default CURRENT_TIMESTAMP,
+  order_updated_at timestamp default CURRENT_TIMESTAMP,
   order_deleted_at timestamp default null
 );
 
@@ -52,8 +52,8 @@ create table if not exists messages (
   to_user_id int references users(id),
   message_type varchar(25) not null,
   file_url varchar,
-  message_created_at timestamp default now(),
-  message_updated_at timestamp default now(),
+  message_created_at timestamp default CURRENT_TIMESTAMP,
+  message_updated_at timestamp default CURRENT_TIMESTAMP,
   message_deleted_at timestamp default null
 );
 
@@ -64,8 +64,8 @@ create table if not exists stars (
   barber_id int references users(id),
   order_id int references orders(id),
   count smallint default 0,
-  stars_created_at timestamp default now(),
-  stars_updated_at timestamp default now(),
+  stars_created_at timestamp default CURRENT_TIMESTAMP,
+  stars_updated_at timestamp default CURRENT_TIMESTAMP,
   stars_deleted_at timestamp default null
 );
 
@@ -74,17 +74,17 @@ insert into roles (name) values ('client'), ('barber'), ('admin');
 delete from users where fullname=fullname;
 delete from email_utils where email=email;
 
-insert into email_utils (email, email_send_code, email_code_validity_period) values 
-  ('dharriss0@admin.ch', 13629, '2022-02-08 04:24:06'),
-  ('kmoberley1@seattletimes.com', 63080, '2021-05-08 08:59:42'),
-  ('cgoulstone2@tiny.cc', 80159, '2021-06-25 01:41:01'),
-  ('gmiddleweek3@ehow.com', 68224, '2022-02-19 15:57:56'),
-  ('dheffron4@google.com.br', 81800, '2022-01-17 03:05:37'),
-  ('cferraro4@princeton.edu', 59195, '2021-12-25 20:57:23'),
-  ('mjoselson1@blog.com', 65671, '2021-12-21 02:31:31'),
-  ('amoine2@opensource.org', 68586, '2021-10-30 13:24:39'),
-  ('camery3@about.com', 61987, '2021-07-22 17:02:41'),
-  ('rshapiro4@wikimedia.org', 95852, '2021-06-20 12:03:38');
+insert into email_utils (email, email_send_code) values 
+  ('dharriss0@admin.ch', 13629),
+  ('kmoberley1@seattletimes.com', 63080),
+  ('cgoulstone2@tiny.cc', 80159),
+  ('gmiddleweek3@ehow.com', 68224),
+  ('dheffron4@google.com.br', 81800),
+  ('cferraro4@princeton.edu', 59195),
+  ('mjoselson1@blog.com', 65671),
+  ('amoine2@opensource.org', 68586),
+  ('camery3@about.com', 61987),
+  ('rshapiro4@wikimedia.org', 95852);
 
 
 insert into users (fullname, email_utils_id, image_url, role_id) values 
@@ -110,5 +110,18 @@ select
     when length('42432'::varchar) > 0 then email_send_code='42432'::varchar
     else TRUE
   end and 
-  now() < email_code_validity_period and 
-  email_deleted_at is null;
+  CURRENT_TIMESTAMP < email_code_validity_period and 
+  email_deleted_at is null
+
+
+select 
+    * 
+  from email_utils 
+  where
+    email = 'abdurakhmonovislom9@gmail.com' and
+    case 
+      when length('29757') > 0 then email_send_code='29757'
+    else TRUE
+    end and 
+    CURRENT_TIMESTAMP < email_code_validity_period::timestamp and 
+    email_deleted_at is null;

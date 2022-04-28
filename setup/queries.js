@@ -1,8 +1,8 @@
 const postEmail = `
   insert into email_utils 
-    (email, email_send_code, email_code_validity_period) 
+    (email, email_send_code) 
   values 
-    ($1::varchar, $2::varchar, $3::timestamptz) returning *;
+    ($1, $2) returning *;
 `
 
 const postUser = `
@@ -22,7 +22,7 @@ const getEmail = `
       when length($2) > 0 then email_send_code=$2
     else TRUE
     end and 
-    now() < email_code_validity_period and 
+    current_timestamp < email_code_validity_period and 
     email_deleted_at is null;
 `
 
@@ -42,10 +42,21 @@ const getUserFromEmail = `
 const deleteEmailFromTime = `
   update email_utils
   set 
-    email_deleted_at = now()
+    email_deleted_at = current_timestamp
   where 
     email = $1 or
-    now() >= email_code_validity_period;
+    current_timestamp >= email_code_validity_period;
+`
+
+const updateEmailExists = `
+  update email_utils 
+  set 
+    email_send_code = $2,
+    email_code_validity_period = CURRENT_TIMESTAMP + (interval '10 minute'), 
+    email_updated_at = current_timestamp
+  where 
+    email = $1
+  returning email_send_code;
 `
 
 export default {
@@ -54,4 +65,5 @@ export default {
   getUserFromEmail,
   postUser,
   deleteEmailFromTime,
+  updateEmailExists,
 }
