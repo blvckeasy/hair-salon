@@ -5,6 +5,7 @@ const router = express.Router()
 const controller = new Controller()
 
 router.post('/', controller.POST)
+router.post('/:userId', controller.POST)
 
 
 

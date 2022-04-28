@@ -9,7 +9,7 @@ const email_code_period = 10   // minute
 const email_regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 const PAGINATION = {
   page: 1,
-  limit: 20
+  limit: 5
 }
 
 

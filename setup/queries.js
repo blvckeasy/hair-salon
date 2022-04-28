@@ -38,7 +38,6 @@ const getUserFromEmail = `
     u.email_utils_id = $1
 `
 
-
 const deleteEmailFromTime = `
   update email_utils
   set 
@@ -59,10 +58,33 @@ const updateEmailExists = `
   returning email_send_code;
 `
 
+const getAllPost = `
+  select 
+    p.*,
+    u.id as user_id,
+    u.fullname as fullname,
+    u.email_utils_id as email_utils_id,
+    u.image_url as image_url
+  from posts as p
+  left join users as u 
+  on 
+    p.barber_id = u.id
+  where 
+    p.post_deleted_at is null and 
+    case
+      when $1 <> 0 then p.barber_id = $1
+      else true
+    end
+    order by p.like_count desc
+  limit $2
+  offset $3
+`
+
 export default {
-  postEmail,
   getEmail,
+  getAllPost,
   getUserFromEmail,
+  postEmail,
   postUser,
   deleteEmailFromTime,
   updateEmailExists,

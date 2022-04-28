@@ -23,7 +23,6 @@ class Controller {
         token: sign(found_user)
       })
     } catch (err) {
-      console.log(err.message)
       return res.json({
         message: "Maybe you will try from the beginning :(",
         error: err.message,
@@ -37,8 +36,6 @@ class Controller {
       const { fullname, email, code } = req.body
       const file = req.file
       const found_email = await fetch(queries.getEmail, email, code)
-      console.log(email, code)
-      console.log(found_email)
       let file_name = null
 
       if (!email.match(email_regex)) throw new Error('Invalid email !')
