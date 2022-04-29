@@ -14,7 +14,7 @@ class Controller {
       const users = await req.select('users')
       
       if(userId) {
-        const posts = await fetchAll(queries.getAllPost, userId, limit * page, page * limit - limit)
+        const posts = await fetchAll(queries.getAllPost, userId)
         const user = users.find(user => user.id == userId)
         user['posts'] = posts
 
