@@ -59,6 +59,30 @@ const getAllPost = `
     order by p.post_created_at desc;
 `
 
+const getAllLikeUser = `
+  select 
+    * 
+  from likes 
+  where
+    like_deleted_at is null and user_id = $1; 
+`
+
+const getAllSavedUser = `
+  select 
+    * 
+  from clouds 
+  where
+    cloud_deleted_at is null and user_id = $1; 
+`
+
+const getAllPostUser = `
+  select 
+    *
+  from posts
+  where 
+    post_deleted_at is null and barber_id = $1;
+`
+
 const postEmail = `
   insert into email_utils 
     (email, email_send_code) 
@@ -125,6 +149,9 @@ export default {
   getLikePost,
   getSavedPost,
   getUserFromEmail,
+  getAllLikeUser,
+  getAllSavedUser,
+  getAllPostUser,
   postEmail,
   postUser,
   postDisLike,

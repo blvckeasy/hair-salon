@@ -15,13 +15,17 @@ class Controller {
       
       if(userId) {
         const posts = await fetchAll(queries.getAllPost, userId)
+        const paginatedPost = posts.slice(page * limit - limit, limit * page)
         const user = users.find(user => user.id == userId)
 
         return res.json({
           message: "ok",
           data: {
             user,
-            posts
+            posts: paginatedPost,
+            posts_count: (await fetchAll(queries.getAllPostUser, userId)).length,
+            likes_count: (await fetchAll(queries.getAllLikeUser, userId)).length,
+            saved_count: (await fetchAll(queries.getAllSavedUser, userId)).length
           },
         })
       } else {
@@ -38,9 +42,13 @@ class Controller {
               userPosts.push(post)
             }
           }
+
           data.push({
             user,
-            posts: userPosts
+            posts: userPosts,
+            posts_count: (await fetchAll(queries.getAllPostUser, user.id)).length,
+            likes_count: (await fetchAll(queries.getAllLikeUser, user.id)).length,
+            saved_count: (await fetchAll(queries.getAllSavedUser, user.id)).length,
           })
         }
         
