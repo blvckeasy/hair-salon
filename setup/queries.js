@@ -66,19 +66,23 @@ const getAllPost = `
     p.bio,
     u.fullname as fullname,
     u.email_utils_id as email_utils_id,
+    e.email as email,
     u.image_url as image_url,
     p.post_created_at
   from posts as p
   left join users as u 
   on 
     p.barber_id = u.id
+  left join email_utils as e
+  on
+    u.email_utils_id = e.id
   where 
     p.post_deleted_at is null and 
     case
       when $1 <> 0 then p.barber_id = $1
       else true
     end
-    order by p.id desc
+    order by p.post_created_at desc
   limit $2
   offset $3
 `
@@ -116,6 +120,7 @@ const postUnSave = `
 const postSave = `
   insert into clouds (user_id, post_id) values ($1, $2) returning *;
 `
+
 
 export default {
   getEmail,
