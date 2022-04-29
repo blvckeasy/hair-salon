@@ -18,6 +18,7 @@ create table if not exists users (
   email_utils_id int references email_utils(id) unique,
   image_url varchar default '/user.image.jpg',
   role_id int references roles(id) default 1,
+  bio varchar(250) default null,
   socket_id varchar(40),
   user_created_at timestamp default CURRENT_TIMESTAMP,
   user_updated_at timestamp default CURRENT_TIMESTAMP,

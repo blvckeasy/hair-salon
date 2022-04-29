@@ -16,28 +16,35 @@ class Controller {
       if(userId) {
         const posts = await fetchAll(queries.getAllPost, userId)
         const user = users.find(user => user.id == userId)
-        user['posts'] = posts
 
         return res.json({
           message: "ok",
-          data: user,
+          data: {
+            user,
+            posts
+          },
         })
       } else {
         const paginatedUsers = users.slice(page * limit - limit, limit * page)
         const posts = await fetchAll(queries.getAllPost, null)
-        
+        const data = []
+
         for (const user of paginatedUsers) {
-          user['posts'] = []
+          const userPosts = []
           for (const post of posts) {
             if (user.id == post.barber_id) {
-              user['posts'].push(post)
+              userPosts.push(post)
             }
           }
+          data.push({
+            user,
+            posts: userPosts
+          })
         }
         
         return res.json({
           message: "ok",
-          data: paginatedUsers,
+          data: data,
         })
       }
 

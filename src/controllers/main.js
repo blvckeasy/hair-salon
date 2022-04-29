@@ -21,7 +21,7 @@ class Controller {
       }
       
       return res.json({
-        message: "OK",
+        message: "ok",
         data : paginatedPosts
       })
     } catch (error) {
