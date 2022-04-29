@@ -60,11 +60,14 @@ const updateEmailExists = `
 
 const getAllPost = `
   select 
-    p.*,
-    u.id as user_id,
+    p.id,
+    p.barber_id,
+    p.image_url,
+    p.bio,
     u.fullname as fullname,
     u.email_utils_id as email_utils_id,
-    u.image_url as image_url
+    u.image_url as image_url,
+    p.post_created_at
   from posts as p
   left join users as u 
   on 
@@ -75,17 +78,57 @@ const getAllPost = `
       when $1 <> 0 then p.barber_id = $1
       else true
     end
-    order by p.like_count desc
+    order by p.id desc
   limit $2
   offset $3
+`
+
+const getLikePost = `
+  select * from likes where user_id = $1 and post_id = $2 and like_delete_at is null;
+`
+
+const getSavedPost = `
+  select * from clouds where user_id = $1 and post_id = $2 and cloud_delete_at is null;
+`
+
+const postDisLike = `
+  update likes 
+  set 
+    like_deleted_at = CURRENT_TIMESTAMP  
+  where 
+    user_id = $1 and post_id = $2 and like_deleted_at is null
+  returning *;
+`
+
+const postLike = `
+  insert into likes (user_id, post_id) values ($1, $2) returning *;
+`
+
+const postUnSave = `
+  update clouds 
+  set 
+    like_deleted_at = CURRENT_TIMESTAMP  
+  where 
+    user_id = $1 and post_id = $2 and like_deleted_at is null
+  returning *;
+`
+
+const postSave = `
+  insert into clouds (user_id, post_id) values ($1, $2) returning *;
 `
 
 export default {
   getEmail,
   getAllPost,
+  getLikePost,
+  getSavedPost,
   getUserFromEmail,
   postEmail,
   postUser,
+  postDisLike,
+  postLike,
+  postUnSave,
+  postSave,
   deleteEmailFromTime,
   updateEmailExists,
 }

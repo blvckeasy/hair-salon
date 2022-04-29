@@ -16,7 +16,7 @@ create table if not exists users (
   id smallserial primary key,
   fullname varchar(50) not null,
   email_utils_id int references email_utils(id) unique,
-  image_url varchar not null default '/user.image.jpg',
+  image_url varchar default '/user.image.jpg',
   role_id int references roles(id) default 1,
   socket_id varchar(40),
   user_created_at timestamp default CURRENT_TIMESTAMP,
@@ -62,7 +62,6 @@ create table if not exists posts (
   id smallserial primary key,
   barber_id int references users(id),
   image_url varchar not null,
-  like_count int not null default 0,
   bio varchar(250) not null default '',
   post_created_at timestamp default CURRENT_TIMESTAMP,
   post_updated_at timestamp default CURRENT_TIMESTAMP,
@@ -79,7 +78,15 @@ create table if not exists clouds (
   cloud_deleted_at timestamp default null
 );
 
-
+drop table if exists likes cascade;
+create table if not exists likes (
+  id smallserial primary key,
+  user_id int references users(id),
+  post_id int references posts(id),
+  like_created_at timestamp default CURRENT_TIMESTAMP,
+  like_updated_at timestamp default CURRENT_TIMESTAMP,
+  like_deleted_at timestamp default null
+);
 
 
 
@@ -113,50 +120,67 @@ insert into users (fullname, email_utils_id, image_url, role_id) values
   ('Ambrosius Vigar', 10, 'http://dummyimage.com/121x100.png/5fa2dd/ffffff', 2);
 
   
-insert into posts (id, barber_id, image_url, like_count, bio) values 
-  (1, 4, 'http://dummyimage.com/207x100.png/5fa2dd/ffffff', 82, 'Decentralized client-driven knowledge base'),
-  (2, 10, 'http://dummyimage.com/167x100.png/5fa2dd/ffffff', 46, 'Enterprise-wide disintermediate local area network'),
-  (3, 7, 'http://dummyimage.com/222x100.png/5fa2dd/ffffff', 48, 'Robust mission-critical circuit'),
-  (4, 8, 'http://dummyimage.com/197x100.png/5fa2dd/ffffff', 24, 'User-friendly user-facing data-warehouse'),
-  (5, 6, 'http://dummyimage.com/111x100.png/5fa2dd/ffffff', 10, 'Devolved bifurcated standardization'),
-  (6, 1, 'http://dummyimage.com/128x100.png/5fa2dd/ffffff', 80, 'Expanded demand-driven policy'),
-  (7, 8, 'http://dummyimage.com/243x100.png/ff4444/ffffff', 32, 'User-centric coherent website'),
-  (8, 10, 'http://dummyimage.com/174x100.png/cc0000/ffffff', 13, 'Synergized transitional application'),
-  (9, 8, 'http://dummyimage.com/131x100.png/dddddd/000000', 51, 'Digitized incremental alliance'),
-  (10, 3, 'http://dummyimage.com/226x100.png/5fa2dd/ffffff', 61, 'Open-source uniform portal'),
-  (11, 9, 'http://dummyimage.com/248x100.png/dddddd/000000', 40, 'Configurable object-oriented model'),
-  (12, 1, 'http://dummyimage.com/104x100.png/5fa2dd/ffffff', 47, 'Persistent bifurcated contingency'),
-  (13, 4, 'http://dummyimage.com/131x100.png/5fa2dd/ffffff', 40, 'Centralized even-keeled migration'),
-  (14, 7, 'http://dummyimage.com/207x100.png/dddddd/000000', 44, 'Networked cohesive capability'),
-  (15, 2, 'http://dummyimage.com/111x100.png/5fa2dd/ffffff', 81, 'Cross-group stable pricing structure'),
-  (16, 9, 'http://dummyimage.com/171x100.png/ff4444/ffffff', 76, 'Networked zero administration success'),
-  (17, 8, 'http://dummyimage.com/173x100.png/ff4444/ffffff', 31, 'Decentralized needs-based capacity'),
-  (18, 10, 'http://dummyimage.com/124x100.png/dddddd/000000', 62, 'Virtual demand-driven functionalities'),
-  (19, 6, 'http://dummyimage.com/160x100.png/dddddd/000000', 5, 'Digitized regional approach'),
-  (20, 10, 'http://dummyimage.com/226x100.png/dddddd/000000', 87, 'Digitized coherent structure'),
-  (21, 10, 'http://dummyimage.com/138x100.png/5fa2dd/ffffff', 17, 'Open-source national framework'),
-  (22, 6, 'http://dummyimage.com/200x100.png/dddddd/000000', 48, 'Self-enabling context-sensitive application'),
-  (23, 1, 'http://dummyimage.com/216x100.png/ff4444/ffffff', 10, 'Switchable responsive flexibility'),
-  (24, 3, 'http://dummyimage.com/204x100.png/ff4444/ffffff', 64, 'Fundamental demand-driven internet solution'),
-  (25, 10, 'http://dummyimage.com/232x100.png/dddddd/000000', 83, 'Exclusive transitional knowledge user'),
-  (26, 8, 'http://dummyimage.com/178x100.png/dddddd/000000', 31, 'Programmable systematic complexity'),
-  (27, 6, 'http://dummyimage.com/111x100.png/5fa2dd/ffffff', 49, 'Realigned heuristic matrices'),
-  (28, 1, 'http://dummyimage.com/110x100.png/5fa2dd/ffffff', 44, 'Enhanced encompassing application'),
-  (29, 3, 'http://dummyimage.com/219x100.png/ff4444/ffffff', 90, 'Distributed tertiary customer loyalty'),
-  (30, 5, 'http://dummyimage.com/206x100.png/ff4444/ffffff', 46, 'Horizontal background forecast'),
-  (31, 4, 'http://dummyimage.com/160x100.png/ff4444/ffffff', 42, 'Fundamental mobile matrices'),
-  (32, 10, 'http://dummyimage.com/104x100.png/ff4444/ffffff', 59, 'Total eco-centric ability'),
-  (33, 3, 'http://dummyimage.com/196x100.png/ff4444/ffffff', 19, 'Face to face web-enabled intranet'),
-  (34, 3, 'http://dummyimage.com/117x100.png/cc0000/ffffff', 98, 'Intuitive empowering open system'),
-  (35, 3, 'http://dummyimage.com/123x100.png/ff4444/ffffff', 5, 'Optional explicit time-frame'),
-  (36, 9, 'http://dummyimage.com/112x100.png/5fa2dd/ffffff', 85, 'Team-oriented regional info-mediaries'),
-  (37, 5, 'http://dummyimage.com/191x100.png/dddddd/000000', 40, 'Reduced intermediate installation'),
-  (38, 6, 'http://dummyimage.com/190x100.png/ff4444/ffffff', 43, 'Compatible heuristic emulation'),
-  (39, 9, 'http://dummyimage.com/164x100.png/5fa2dd/ffffff', 100, 'Multi-tiered explicit hub'),
-  (40, 7, 'http://dummyimage.com/216x100.png/ff4444/ffffff', 69, 'Up-sized impactful hub');
+insert into posts (id, barber_id, image_url, bio) values 
+  (1, 4, 'http://dummyimage.com/207x100.png/5fa2dd/ffffff', 'Decentralized client-driven knowledge base'),
+  (2, 10, 'http://dummyimage.com/167x100.png/5fa2dd/ffffff', 'Enterprise-wide disintermediate local area network'),
+  (3, 7, 'http://dummyimage.com/222x100.png/5fa2dd/ffffff', 'Robust mission-critical circuit'),
+  (4, 8, 'http://dummyimage.com/197x100.png/5fa2dd/ffffff', 'User-friendly user-facing data-warehouse'),
+  (5, 6, 'http://dummyimage.com/111x100.png/5fa2dd/ffffff', 'Devolved bifurcated standardization'),
+  (6, 1, 'http://dummyimage.com/128x100.png/5fa2dd/ffffff', 'Expanded demand-driven policy'),
+  (7, 8, 'http://dummyimage.com/243x100.png/ff4444/ffffff', 'User-centric coherent website'),
+  (8, 10, 'http://dummyimage.com/174x100.png/cc0000/ffffff', 'Synergized transitional application'),
+  (9, 8, 'http://dummyimage.com/131x100.png/dddddd/000000', 'Digitized incremental alliance'),
+  (10, 3, 'http://dummyimage.com/226x100.png/5fa2dd/ffffff', 'Open-source uniform portal'),
+  (11, 9, 'http://dummyimage.com/248x100.png/dddddd/000000', 'Configurable object-oriented model'),
+  (12, 1, 'http://dummyimage.com/104x100.png/5fa2dd/ffffff', 'Persistent bifurcated contingency'),
+  (13, 4, 'http://dummyimage.com/131x100.png/5fa2dd/ffffff', 'Centralized even-keeled migration'),
+  (14, 7, 'http://dummyimage.com/207x100.png/dddddd/000000', 'Networked cohesive capability'),
+  (15, 2, 'http://dummyimage.com/111x100.png/5fa2dd/ffffff', 'Cross-group stable pricing structure'),
+  (16, 9, 'http://dummyimage.com/171x100.png/ff4444/ffffff', 'Networked zero administration success'),
+  (17, 8, 'http://dummyimage.com/173x100.png/ff4444/ffffff', 'Decentralized needs-based capacity'),
+  (18, 10, 'http://dummyimage.com/124x100.png/dddddd/000000', 'Virtual demand-driven functionalities'),
+  (19, 6, 'http://dummyimage.com/160x100.png/dddddd/000000', 'Digitized regional approach'),
+  (20, 10, 'http://dummyimage.com/226x100.png/dddddd/000000', 'Digitized coherent structure'),
+  (21, 10, 'http://dummyimage.com/138x100.png/5fa2dd/ffffff', 'Open-source national framework'),
+  (22, 6, 'http://dummyimage.com/200x100.png/dddddd/000000', 'Self-enabling context-sensitive application'),
+  (23, 1, 'http://dummyimage.com/216x100.png/ff4444/ffffff', 'Switchable responsive flexibility'),
+  (24, 3, 'http://dummyimage.com/204x100.png/ff4444/ffffff', 'Fundamental demand-driven internet solution'),
+  (25, 10, 'http://dummyimage.com/232x100.png/dddddd/000000', 'Exclusive transitional knowledge user'),
+  (26, 8, 'http://dummyimage.com/178x100.png/dddddd/000000', 'Programmable systematic complexity'),
+  (27, 6, 'http://dummyimage.com/111x100.png/5fa2dd/ffffff', 'Realigned heuristic matrices'),
+  (28, 1, 'http://dummyimage.com/110x100.png/5fa2dd/ffffff', 'Enhanced encompassing application'),
+  (29, 3, 'http://dummyimage.com/219x100.png/ff4444/ffffff', 'Distributed tertiary customer loyalty'),
+  (30, 5, 'http://dummyimage.com/206x100.png/ff4444/ffffff', 'Horizontal background forecast'),
+  (31, 4, 'http://dummyimage.com/160x100.png/ff4444/ffffff', 'Fundamental mobile matrices'),
+  (32, 10, 'http://dummyimage.com/104x100.png/ff4444/ffffff', 'Total eco-centric ability'),
+  (33, 3, 'http://dummyimage.com/196x100.png/ff4444/ffffff', 'Face to face web-enabled intranet'),
+  (34, 3, 'http://dummyimage.com/117x100.png/cc0000/ffffff', 'Intuitive empowering open system'),
+  (35, 3, 'http://dummyimage.com/123x100.png/ff4444/ffffff', 'Optional explicit time-frame'),
+  (36, 9, 'http://dummyimage.com/112x100.png/5fa2dd/ffffff', 'Team-oriented regional info-mediaries'),
+  (37, 5, 'http://dummyimage.com/191x100.png/dddddd/000000', 'Reduced intermediate installation'),
+  (38, 6, 'http://dummyimage.com/190x100.png/ff4444/ffffff', 'Compatible heuristic emulation'),
+  (39, 9, 'http://dummyimage.com/164x100.png/5fa2dd/ffffff', 'Multi-tiered explicit hub'),
+  (40, 7, 'http://dummyimage.com/216x100.png/ff4444/ffffff', 'Up-sized impactful hub');
 
 
 
+insert into likes (user_id, post_id) values 
+  (10, 31), (9, 3), (10, 6), (4, 5), (5, 31), (3, 30), (5, 31), (1, 33), (6, 22), (1, 22), (10, 25), (7, 14), (7, 17), (8, 8), 
+  (6, 28), (6, 27), (2, 31), (8, 26), (9, 18), (9, 1), (3, 27), (4, 12), (6, 20), (8, 7), (10, 3), (2, 35), (6, 37), (8, 23), 
+  (3, 33), (3, 19), (2, 37), (4, 16), (3, 7), (1, 31), (3, 4), (1, 5), (2, 13), (7, 1), (10, 14), (9, 17);
+  
+
+
+
+insert into likes (user_id, post_id) values (11, 27), (11, 22);
+insert into clouds (user_id, post_id) values (11, 38), (11, 27), (11, 22);
+
+update likes 
+set 
+  user_id = 1  
+where 
+  id = 1
+returning *;
 
 -- selects
 
@@ -199,10 +223,14 @@ select
     u.fullname as fullname,
     u.email_utils_id as email_utils_id,
     u.image_url as image_url
+    l.*
   from posts as p
   left join users as u 
   on 
     p.barber_id = u.id
+  left join likes as l
+  on
+    l.user_id = $$ && l.post_id = p.post_id
   where 
     p.post_deleted_at is null and 
     case
@@ -212,3 +240,15 @@ select
   order by p.like_count desc
   limit 1
   offset 5;
+
+
+select 
+  case
+    when (select user_id, post_id from likes where user_id = 1 and post_id = 22) then true
+    else false
+  end as is_liked
+from likes;
+  
+
+
+insert into likes (id, user_id, post_id) values (41, 6, 38);
