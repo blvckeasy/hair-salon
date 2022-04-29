@@ -1,15 +1,9 @@
-const postEmail = `
-  insert into email_utils 
-    (email, email_send_code) 
-  values 
-    ($1, $2) returning *;
+const getLikePost = `
+  select * from likes where user_id = $1 and post_id = $2 and like_deleted_at is null;
 `
 
-const postUser = `
-  insert into users 
-    (fullname, email_utils_id, image_url) 
-  values 
-    ($1, $2, $3) returning *;
+const getSavedPost = `
+  select * from clouds where user_id = $1 and post_id = $2 and cloud_deleted_at is null;
 `
 
 const getEmail = `
@@ -38,26 +32,6 @@ const getUserFromEmail = `
     u.email_utils_id = $1
 `
 
-const deleteEmailFromTime = `
-  update email_utils
-  set 
-    email_deleted_at = current_timestamp
-  where 
-    email = $1 or
-    current_timestamp >= email_code_validity_period;
-`
-
-const updateEmailExists = `
-  update email_utils 
-  set 
-    email_send_code = $2,
-    email_code_validity_period = CURRENT_TIMESTAMP + (interval '10 minute'), 
-    email_updated_at = current_timestamp
-  where 
-    email = $1
-  returning email_send_code;
-`
-
 const getAllPost = `
   select 
     p.id,
@@ -82,17 +56,21 @@ const getAllPost = `
       when $1 <> 0 then p.barber_id = $1
       else true
     end
-    order by p.post_created_at desc
-  limit $2
-  offset $3
+    order by p.post_created_at desc;
 `
 
-const getLikePost = `
-  select * from likes where user_id = $1 and post_id = $2 and like_delete_at is null;
+const postEmail = `
+  insert into email_utils 
+    (email, email_send_code) 
+  values 
+    ($1, $2) returning *;
 `
 
-const getSavedPost = `
-  select * from clouds where user_id = $1 and post_id = $2 and cloud_delete_at is null;
+const postUser = `
+  insert into users 
+    (fullname, email_utils_id, image_url) 
+  values 
+    ($1, $2, $3) returning *;
 `
 
 const postDisLike = `
@@ -111,9 +89,9 @@ const postLike = `
 const postUnSave = `
   update clouds 
   set 
-    like_deleted_at = CURRENT_TIMESTAMP  
+    cloud_deleted_at = CURRENT_TIMESTAMP  
   where 
-    user_id = $1 and post_id = $2 and like_deleted_at is null
+    user_id = $1 and post_id = $2 and cloud_deleted_at is null
   returning *;
 `
 
@@ -121,6 +99,25 @@ const postSave = `
   insert into clouds (user_id, post_id) values ($1, $2) returning *;
 `
 
+const deleteEmailFromTime = `
+  update email_utils
+  set 
+    email_deleted_at = current_timestamp
+  where 
+    email = $1 or
+    current_timestamp >= email_code_validity_period;
+`
+
+const updateEmailExists = `
+  update email_utils 
+  set 
+    email_send_code = $2,
+    email_code_validity_period = CURRENT_TIMESTAMP + (interval '10 minute'), 
+    email_updated_at = current_timestamp
+  where 
+    email = $1
+  returning email_send_code;
+`
 
 export default {
   getEmail,

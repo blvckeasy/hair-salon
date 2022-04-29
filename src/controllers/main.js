@@ -9,18 +9,20 @@ class Controller {
       const { userId } = req.params
       const { token } = req.body
       const user = verify(token)
+
       if (user.error) throw new Error(user.error)
-
-      const posts = await fetchAll(queries.getAllPost, userId || 0, limit * page, page * limit - limit )
-
-      for (let post of posts) {
+    
+      const posts = await fetchAll(queries.getAllPost, userId || 0)
+      const paginatedPosts = posts.slice(page * limit - limit, limit * page)
+      
+      for (const post of paginatedPosts) {
         post.is_liked = await fetch(queries.getLikePost, user.id, post.id) ? true : false
         post.is_saved = await fetch(queries.getSavedPost, user.id, post.id) ? true : false
       }
       
       return res.json({
         message: "OK",
-        data : posts
+        data : paginatedPosts
       })
     } catch (error) {
       return res.json({

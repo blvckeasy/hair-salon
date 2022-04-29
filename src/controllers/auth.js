@@ -4,7 +4,7 @@ import { WriteFile } from '../utils/file.modul.js'
 import { image_mimetypes } from '../../config.js'
 import sendEmail from '../utils/email.modul.js'
 import { sign } from '../utils/jwt.js'
-import { email_regex, email_code_period } from '../../config.js'
+import { email_regex } from '../../config.js'
 
 class Controller {
   async LOGIN (req, res) {
