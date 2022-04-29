@@ -1,4 +1,4 @@
-import { fetchAll } from '../utils/postgres.js'
+import { fetchAll, fetch } from '../utils/postgres.js'
 import queries from '../../setup/queries.js'
 import { verify } from '../utils/jwt.js'
 
@@ -33,6 +33,8 @@ class Controller {
           const userPosts = []
           for (const post of posts) {
             if (user.id == post.barber_id) {
+              post.is_liked = await fetch(queries.getLikePost, user.id, post.id) ? true : false
+              post.is_saved = await fetch(queries.getSavedPost, user.id, post.id) ? true : false
               userPosts.push(post)
             }
           }
