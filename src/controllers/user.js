@@ -31,8 +31,8 @@ class Controller {
       const { userId } = req.params
       const { token } = req.body
       const activeUser = verify(token)
+
       if (activeUser.error) throw new Error('Invalid token')
-      
       const users = await req.select('users')
       
       if(userId) {
@@ -60,7 +60,6 @@ class Controller {
           } || {},
         })
       } else {
-
         const paginatedUsers = users.slice(page * limit - limit, limit * page)
         const posts = await fetchAll(queries.getAllPost, null)
         const data = []

@@ -8,6 +8,7 @@ class Controller {
       const { token } = req.body
       const { barberId } = req.params
       const user = verify(token)
+      
       if (user.error) throw new Error(user.error)
       
       return res.json({
@@ -26,6 +27,7 @@ class Controller {
     try {
       const { token } = req.body
       const user = verify(token)
+
       if (user.error) throw new Error(user.error)
       if (['client'].includes(user.role)) throw new Error('Only barber change this table !')
 
@@ -64,7 +66,7 @@ class Controller {
 
   async UPDATE_COMPLATED (req, res) {
     try {      
-      const { token, isComplated } = req.body
+      const { token, tableId, isComplated } = req.body
       const user = verify(token)
 
       if (user.error) throw new Error(user.error)
@@ -81,7 +83,6 @@ class Controller {
       })
     }
   }
-
 }
 
 

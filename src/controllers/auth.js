@@ -40,7 +40,6 @@ class Controller {
 
       if (!email.match(email_regex)) throw new Error('Invalid email !')
       if (!found_email) throw new Error('Email not found or password already outdated !')
-
       if (file) {
         if (!image_mimetypes.includes(file.mimetype.split('/')[1])) throw new Error(`Only img upload. Mimetypes: ${image_mimetypes.join(', ')}`)
         file_name = await WriteFile(file)
@@ -67,8 +66,8 @@ class Controller {
       const { email } = req.body
       const random_number = String(parseInt(Math.random() * 100000)).padStart(5, 0)
       const message = await sendEmail(email, 'Hair salon', `<b>Your code:</b> <i>${random_number}</i>`)
-      
       const code = await fetch(queries.updateEmailExists, email, random_number)
+      
       if (!code) {
         await fetch(queries.postEmail, email, random_number)
       }
