@@ -51,7 +51,7 @@ class Controller {
 
       return res.json({
         message: "operation successfully ended.",
-        data: found_user,
+        data: found_user || {},
         token: sign(found_user)
       })
     } catch (error) {

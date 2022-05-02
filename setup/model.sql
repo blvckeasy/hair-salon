@@ -29,7 +29,10 @@ create table if not exists users (
 drop table if exists roles cascade;
 create table if not exists roles (
   id smallserial primary key,
-  name varchar(30) not null
+  name varchar(30) not null,
+  role_created_at timestamp default CURRENT_TIMESTAMP,
+  role_updated_at timestamp default CURRENT_TIMESTAMP,
+  role_deleted_at timestamp default null
 );
 
 drop table if exists orders cascade;
@@ -89,11 +92,34 @@ create table if not exists likes (
   like_deleted_at timestamp default null
 );
 
+drop table if exists work_table cascade;
+create table if not exists work_table (
+  id serial primary key,
+  barber_id int not null references users(id),
+  client_id int not null references users(id),
+  comment varchar(200),
+  location varchar(100) not null,
+  order_time time not null,
+  is_complated boolean default false,
+  approval_type int not null references approval_types(id) default 2,
+  table_created_at timestamptz default CURRENT_TIMESTAMP,
+  table_updated_at timestamp default CURRENT_TIMESTAMP,
+  table_deleted_at timestamp default null
+);
 
+drop table if exists approval_types cascade;
+create table if not exists approval_types (
+  id serial primary key,
+  name varchar(50) not null,
+  name_created_at timestamptz default CURRENT_TIMESTAMP,
+  name_updated_at timestamp default CURRENT_TIMESTAMP,
+  name_deleted_at timestamp default null
+); 
 
 -- insert data
 
 insert into roles (name) values ('client'), ('barber'), ('admin');
+insert into approval_types (name) values ('rejected'), ('pending'), ('confirmed');
 
 insert into email_utils (email, email_send_code) values 
   ('dharriss0@admin.ch', 13629),
@@ -170,7 +196,11 @@ insert into likes (user_id, post_id) values
   (6, 28), (6, 27), (2, 31), (8, 26), (9, 18), (9, 1), (3, 27), (4, 12), (6, 20), (8, 7), (10, 3), (2, 35), (6, 37), (8, 23), 
   (3, 33), (3, 19), (2, 37), (4, 16), (3, 7), (1, 31), (3, 4), (1, 5), (2, 13), (7, 1), (10, 14), (9, 17);
   
-
+insert into work_table (barber_id, client_id, location, order_time, approval_type) values 
+  (7, 5, 'https://flavors.me', '9:20', 2), (8, 6, 'http://amazonaws.com', '13:46', 1), (3, 3, 'http://exblog.jp', '18:53', 2),
+  (6, 9, 'https://oakley.com', '9:32', 3), (8, 5, 'http://merriam-webster.com', '18:41', 2), (5, 9, 'https://wikia.com', '20:53', 1),
+  (4, 9, 'https://washingtonpost.com', '15:53', 1), (5, 7, 'http://goo.gl', '11:40', 1), (10, 2, 'http://wp.com', '19:48', 3), 
+  (10, 9, 'https://networksolutions.com', '19:49', 2);  
 
 
 insert into likes (user_id, post_id) values (11, 27), (11, 22);
@@ -251,5 +281,18 @@ select
 from likes;
   
 
+select 
+    *
+  from work_table
+  where
+    barber_id = 6 and
+    'today'::timestamp < table_created_at and
+    'tomorrow'::timestamp > table_created_at and
+    table_deleted_at is null;
+
 
 insert into likes (id, user_id, post_id) values (41, 6, 38);
+
+select 'today'::timestamp < CURRENT_TIMESTAMP;
+
+update work_table set approval_type = 3 where id = 10;

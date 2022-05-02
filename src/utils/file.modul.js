@@ -9,7 +9,7 @@ export const WriteFile = async ({ buffer, originalname }) => {
 
     await writeFile(file_path, buffer)
 
-    return `/upload/${file_name}`
+    return `/${file_name}`
   } catch (error) {
     return error
   }
