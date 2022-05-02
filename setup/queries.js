@@ -246,12 +246,23 @@ const updateApprovalType = `
     approval_type = $3,
     table_updated_at = CURRENT_TIMESTAMP
   where
-    barber_id = $1 and 
-    id = $2 and
+    id = $1 and
+    barber_id = $2 and 
     table_deleted_at is null
   returning *;
 `
 
+const updateComplated = `
+  update work_table
+  set
+    is_complated = $3,
+    table_updated_at = CURRENT_TIMESTAMP
+  where
+    id = $1 and
+    client_id = $2 and
+    table_deleted_at is null
+  returning *;
+`
 
 
 export default {
@@ -273,6 +284,7 @@ export default {
   postUnSave,
   postDisLike,
   deleteEmailFromTime,
+  updateComplated,
   updateEmailExists,
   updateApprovalType,
 }

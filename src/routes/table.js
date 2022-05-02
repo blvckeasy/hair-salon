@@ -8,6 +8,7 @@ router.get('/', controller.GET)
 router.get('/pendings/', controller.PENDING)
 router.get('/:barberId/', controller.GET)
 router.put('/update/approvaltype/', controller.UPDATE_APPROVAL_TYPE)
+router.put('/update/iscomplated/', controller.UPDATE_COMPLATED)
 
 
 export default router
